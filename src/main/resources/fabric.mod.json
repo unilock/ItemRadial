@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "item-radial",
+	"version": "${version}",
+	"name": "Item Radial",
+	"description": "这是一款基于Fabric的物品菜单mod，可以快速浏览和切换你的所有物品",
+	"authors": [
+		"Mosheng"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/item-radial/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.mosheng.itemradial.ItemRadial"
+		],
+		"client": [
+			"com.mosheng.itemradial.client.ItemRadialClient"
+		],
+		"fabric-datagen": [
+			"com.mosheng.itemradial.ItemRadialDataGenerator"
+		]
+	},
+	"mixins": [
+		"item-radial.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "~1.21.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
