@@ -1,6 +1,5 @@
-
 //布局类
-package com.mosheng.itemradial.client;
+package com.mosheng.itemradial;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -15,7 +14,7 @@ public class RadialLayout {
             {18, 100, 18}
     };
 
-    public List<RadialSlot> generateSlots(int centerX, int centerY, PlayerInventory inventory) {
+    public static List<RadialSlot> generateSlots(int centerX, int centerY, PlayerInventory inventory) {
         List<RadialSlot> slots = new ArrayList<>();
 
         for (int[] group : GROUPS) {
@@ -26,8 +25,8 @@ public class RadialLayout {
             for (int i = 0; i < count; i++) {
                 double angle = 2 * Math.PI * i / count;
                 int slotSize = RadialSlot.getSize();
-                int x = centerX + (int)(Math.cos(angle) * radius - slotSize / 2);
-                int y = centerY + (int)(Math.sin(angle) * radius - slotSize / 2);
+                int x = centerX + (int)(Math.cos(angle) * radius - (double)slotSize / 2);
+                int y = centerY + (int)(Math.sin(angle) * radius - (double)slotSize / 2);
 
                 int inventoryIndex = startIndex + i;
                 ItemStack stack = inventoryIndex < inventory.size() ?

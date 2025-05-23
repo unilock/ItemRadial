@@ -1,4 +1,4 @@
-package com.mosheng.itemradial.client;
+package com.mosheng.itemradial;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -8,35 +8,32 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
 import java.util.List;
+import java.util.Locale;
 
 public class RadialMenuScreen extends Screen {
-    private static final Text TITLE = Text.translatable("item-radial.menu.title");
-    private static final int ITEM_SIZE = 24;
-    private static final int PREVIEW_SIZE = 48; // 放大后的预览大小
+    private static final Text TITLE = Text.translatable("itemradial.menu.title");
     private static final float PREVIEW_SCALE = 2.0f; // 放大倍数
 
-    private final RadialLayout layout;
-    private List<RadialSlot> slots;
+    private final List<RadialSlot> slots;
     private RadialSlot hoveredSlot;
-    private long openTime;
 
-    public RadialMenuScreen() {// TODO: 构造函数
+    private final int centerX;
+    private final int centerY;
+
+    public RadialMenuScreen(MinecraftClient client) {// TODO: 构造函数
         super(TITLE);
-        this.layout = new RadialLayout();
-        this.openTime = System.currentTimeMillis();
+
+        this.centerX = client.getWindow().getScaledWidth() / 2;
+        this.centerY = client.getWindow().getScaledHeight() / 2;
+
+        // 更新布局和槽位
+        PlayerInventory inventory = client.player.getInventory();
+        this.slots = RadialLayout.generateSlots(centerX, centerY, inventory);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {// TODO: 绘制菜单界面
         super.render(context, mouseX, mouseY, delta);
-        this.renderBackground(context, mouseX, mouseY, delta);
-
-        int centerX = this.width / 2;
-        int centerY = this.height / 2;
-
-        // 更新布局和槽位
-        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
-        this.slots = layout.generateSlots(centerX, centerY, inventory);
 
         // 更新悬停的格子
         updateHoveredSlot(mouseX, mouseY);
@@ -69,7 +66,7 @@ public class RadialMenuScreen extends Screen {
         context.drawBorder(buttonX, buttonY, buttonWidth, buttonHeight, borderColor);
 
         // 按钮文本
-        Text buttonText = Text.translatable("item-radial.theme." + ItemRadialClient.getCurrentTheme().name().toLowerCase());
+        Text buttonText = Text.translatable("itemradial.theme." + ItemRadial.getCurrentTheme().name().toLowerCase(Locale.ROOT));
         context.drawCenteredTextWithShadow(textRenderer, buttonText,
                 buttonX + buttonWidth / 2, buttonY + (buttonHeight - 8) / 2, 0xFFFFFF);
     }
@@ -86,7 +83,7 @@ public class RadialMenuScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {// TODO: 处理鼠标点击
         if (button == 0 && isMouseOverThemeButton((int)mouseX, (int)mouseY)) {
-            ItemRadialClient.cycleTheme();
+            ItemRadial.cycleTheme();
             MinecraftClient.getInstance().player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 1.0f, 1.0f);
             return true;
         }
@@ -115,9 +112,9 @@ public class RadialMenuScreen extends Screen {
             // 保存当前变换状态
             context.getMatrices().push();
 
-            // 计算物品原始大小居中位置
-            int originalX = centerX - 8;  // 物品默认宽度16/2=8
-            int originalY = centerY - 8;  // 物品默认高度16/2=8
+//            // 计算物品原始大小居中位置
+//            int originalX = centerX - 8;  // 物品默认宽度16/2=8
+//            int originalY = centerY - 8;  // 物品默认高度16/2=8
 
             // 应用放大变换（以物品中心点为基准）
             context.getMatrices().translate(centerX, centerY, 0);
@@ -161,6 +158,5 @@ public class RadialMenuScreen extends Screen {
         if (hoveredSlot != null) {
             hoveredSlot.onClick();
         }
-        this.close();
     }
 }

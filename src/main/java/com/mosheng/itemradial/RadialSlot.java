@@ -1,4 +1,4 @@
-package com.mosheng.itemradial.client;
+package com.mosheng.itemradial;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -45,25 +45,16 @@ public class RadialSlot {
     }
 
     public void renderHoverEffect(DrawContext context) {
-        ItemRadialClient.Theme theme = ItemRadialClient.getCurrentTheme();
-        int hoverColor;
-
-        switch (theme) {
-            case VANILLA:
-                hoverColor = 0x60FFFFFF; // 原版风格的白色悬停
-                break;
-            case MINIMAL:
-                hoverColor = 0x40FFFFFF; // 极简风格的轻微悬停
-                break;
-            case COLORFUL:
-            default:
-                hoverColor = (HOVER_OPACITY << 24) | 0xFFFFFF;
-                break;
-        }
+        ItemRadial.Theme theme = ItemRadial.getCurrentTheme();
+        int hoverColor = switch (theme) {
+			case VANILLA -> 0x60FFFFFF; // 原版风格的白色悬停
+			case MINIMAL -> 0x40FFFFFF; // 极简风格的轻微悬停
+			default -> (HOVER_OPACITY << 24) | 0xFFFFFF;
+		};
 
         context.fill(x, y, x + SIZE, y + SIZE, hoverColor);
 
-        if (theme == ItemRadialClient.Theme.COLORFUL) {
+        if (theme == ItemRadial.Theme.COLORFUL) {
             int glowColor = (0x20 << 24) | 0xFFFFFF;
             context.fill(x - 1, y - 1, x + SIZE + 1, y + SIZE + 1, glowColor);
         }
@@ -73,7 +64,7 @@ public class RadialSlot {
         int bgColor = getBackgroundColor();
 
         // 根据主题决定是否绘制圆角
-        if (ItemRadialClient.getCurrentTheme() != ItemRadialClient.Theme.MINIMAL) {
+        if (ItemRadial.getCurrentTheme() != ItemRadial.Theme.MINIMAL) {
             int radius = 4;
             context.fill(x + radius, y, x + SIZE - radius, y + SIZE, bgColor);
             context.fill(x, y + radius, x + SIZE, y + SIZE - radius, bgColor);
@@ -88,7 +79,7 @@ public class RadialSlot {
     }
 
     private int getBackgroundColor() {
-        ItemRadialClient.Theme theme = ItemRadialClient.getCurrentTheme();
+        ItemRadial.Theme theme = ItemRadial.getCurrentTheme();
 
         switch (theme) {
             case VANILLA:
@@ -111,13 +102,13 @@ public class RadialSlot {
             for (int x = -radius; x <= radius; x++) {
                 if (x*x + y*y <= radius*radius) {
                     // 检查象限
-                    boolean inQuadrant = false;
-                    switch (quadrant) {
-                        case 0: inQuadrant = (x <= 0 && y <= 0); break; // 左上
-                        case 1: inQuadrant = (x >= 0 && y <= 0); break; // 右上
-                        case 2: inQuadrant = (x >= 0 && y >= 0); break; // 右下
-                        case 3: inQuadrant = (x <= 0 && y >= 0); break; // 左下
-                    }
+                    boolean inQuadrant = switch (quadrant) {
+						case 0 -> (x <= 0 && y <= 0); // 左上
+						case 1 -> (x >= 0 && y <= 0); // 右上
+						case 2 -> (x >= 0 && y >= 0); // 右下
+						case 3 -> (x <= 0 && y >= 0); // 左下
+						default -> false; 
+					};
 
                     if (inQuadrant) {
                         context.fill(centerX + x, centerY + y, centerX + x + 1, centerY + y + 1, color);
@@ -131,7 +122,7 @@ public class RadialSlot {
         // 使用更柔和的颜色
         if (inventoryIndex < 6) return 0x55CCFF;  // 浅蓝色 - 快捷栏
         if (inventoryIndex < 18) return 0xFFCC55; // 浅橙色 - 主物品栏
-        return 0x88FF88;                         // 浅绿色 - 盔甲栏
+        return 0x88FF88;                          // 浅绿色 - 盔甲栏
     }
 
     public void onClick() {
