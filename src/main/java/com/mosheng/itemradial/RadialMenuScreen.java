@@ -20,14 +20,14 @@ public class RadialMenuScreen extends Screen {
     private final int centerX;
     private final int centerY;
 
-    public RadialMenuScreen(MinecraftClient client) {// TODO: 构造函数
+    public RadialMenuScreen() {// TODO: 构造函数
         super(TITLE);
 
-        this.centerX = client.getWindow().getScaledWidth() / 2;
-        this.centerY = client.getWindow().getScaledHeight() / 2;
+        this.centerX = MinecraftClient.getInstance().getWindow().getScaledWidth() / 2;
+        this.centerY = MinecraftClient.getInstance().getWindow().getScaledHeight() / 2;
 
         // 更新布局和槽位
-        PlayerInventory inventory = client.player.getInventory();
+        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
         this.slots = RadialLayout.generateSlots(centerX, centerY, inventory);
     }
 

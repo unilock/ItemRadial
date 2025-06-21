@@ -20,7 +20,6 @@ public class ItemRadial implements ClientModInitializer {
             GLFW.GLFW_KEY_R,
             "category.itemradial.keys"
     ));
-    private static boolean isRadialMenuOpen = false;
     private static boolean keyWasPressed = false;
     public enum Theme {
         COLORFUL,  // 炫丽风格
@@ -48,8 +47,8 @@ public class ItemRadial implements ClientModInitializer {
             // 按键刚刚按下
             if (isPressed && !keyWasPressed) {
                 client.execute(() -> {
-                    if (!isRadialMenuOpen) {
-                        this.openRadialMenu(MinecraftClient.getInstance());
+                    if (MinecraftClient.getInstance().currentScreen == null) {
+                        MinecraftClient.getInstance().setScreen(new RadialMenuScreen());
                     }
                 });
             }
@@ -59,22 +58,12 @@ public class ItemRadial implements ClientModInitializer {
                 client.execute(() -> {
                     if (MinecraftClient.getInstance().currentScreen instanceof RadialMenuScreen radialMenuScreen) {
                         radialMenuScreen.selectHoveredItem();
-                        closeRadialMenu(radialMenuScreen);
+                        radialMenuScreen.close();
                     }
                 });
             }
 
             keyWasPressed = isPressed;
         });
-    }
-
-    private void openRadialMenu(MinecraftClient client) {
-        client.setScreen(new RadialMenuScreen(client));
-        isRadialMenuOpen = true;
-    }
-
-    private void closeRadialMenu(RadialMenuScreen radialMenuScreen) {
-        radialMenuScreen.close();
-        isRadialMenuOpen = false;
     }
 }
